@@ -26,6 +26,12 @@ To run the python application you will need to obtain an API Key from the Spotif
 Copy the API key and secret into a file called `api_key.py` under the spotify-analysis folder.
 You can use the template `api_key_template.py` for reference. 
 
+Install the Spotipy python library (for easier access of the spotify API)
+
+```
+$ pip install spotipy
+```
+
 After this is complete, you can run the code with
 
 ```
