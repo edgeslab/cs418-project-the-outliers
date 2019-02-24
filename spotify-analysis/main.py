@@ -4,7 +4,6 @@ import time
 import json
 import requests
 import api_key
-import spotipy
 import base64
 
 
@@ -20,7 +19,7 @@ def get_access_token():
     # The header of this POST request must contain the Authorization param.
     # Base 64 encoded string that contains the client ID and client secret key.
     # format: Authorization: Basic <base64 encoded client_id:client_secret>
-    auth = api_key.client_key+":"+api_key.client_secret
+    auth = api_key.client_key + ":" + api_key.client_secret
     header = {
         "Authorization": b'Basic ' + base64.b64encode(auth.encode())
     }
@@ -57,4 +56,6 @@ def get_playlist(playlist_id, access_token):
 print(api_key.client_key)
 print(api_key.client_secret)
 access_token = get_access_token()
+
+# Rap Caviar Playlist
 get_playlist("37i9dQZF1DX0XUsuxWHRQd", access_token)
