@@ -52,8 +52,7 @@ time.sleep(0.200)
 DenmarkTop50 = main.get_playlist("37i9dQZEVXbL3J0k32lWnN", access_token)
 time.sleep(0.200)
 
-DominicanRepublicTop50 = main.get_playlist(
-    "37i9dQZEVXbKAbrMR8uuf7", access_token)
+DominicanRepublicTop50 = main.get_playlist("37i9dQZEVXbKAbrMR8uuf7", access_token)
 time.sleep(0.200)
 
 EcuadorTop50 = main.get_playlist("37i9dQZEVXbJlM6nvL1nD1", access_token)
