@@ -113,7 +113,7 @@ def get_audio_features(tracks, access_token):
     Args:
         tracks(list, track objects): A list of track objects 
         https://developer.spotify.com/documentation/web-api/reference/object-model/#track-object-full
-        access_token(string): the access token to use to make api requests
+        access_token(string): the access token to use to make api requests.
     Returns:
         a list of the audio features each object has
         https://developer.spotify.com/documentation/web-api/reference/tracks/get-several-audio-features/
