@@ -2,6 +2,7 @@
 import io
 import time
 import json
+import csv
 import requests
 import api_key
 import base64
@@ -125,7 +126,27 @@ def get_audio_features(tracks, access_token):
         ids = ids + t['id'] + ','
 
     url = "https://api.spotify.com/v1/audio-features?ids=" + ids
-    return get_from_api(url, access_token)
+    data = get_from_api(url, access_token)
+    return data[next(iter(data))]
+
+
+def export_to_csv(filename, list):
+    """
+    Get the audio features of the provided tracks list
+
+    Args:
+        filename(string): The name of the csv file to be created
+        list(list, dictionary objects): The list of data extracted from json to be put into a csv file.   
+    Output:
+        a csv file with the indicated name   
+    """
+    with open(filename, mode='w') as csv_file:
+        colNames = list[0].keys()
+        writer = csv.DictWriter(csv_file, fieldnames=colNames)
+
+        writer.writeheader()
+        for record in list:
+            writer.writerow(record)
 
 
 print(api_key.client_key)
@@ -134,3 +155,4 @@ access_token = get_access_token()
 
 # Rap Caviar Playlist
 rap_caviar_audio_features = get_playlist_audio_features("37i9dQZF1DX0XUsuxWHRQd", access_token)
+export_to_csv('rap_caviar_audio_features.csv',rap_caviar_audio_features)
