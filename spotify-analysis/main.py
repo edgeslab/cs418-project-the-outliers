@@ -131,9 +131,15 @@ def get_audio_features(tracks, access_token):
 
 
 def export_to_csv(filename, list):
-    
-    #print (list)
-    
+    """
+    Get the audio features of the provided tracks list
+
+    Args:
+        filename(string): The name of the csv file to be created
+        list(list, dictionary objects): The list of data extracted from json to be put into a csv file.   
+    Output:
+        a csv file with the indicated name   
+    """
     with open(filename, mode='w') as csv_file:
         colNames = list[0].keys()
         writer = csv.DictWriter(csv_file, fieldnames=colNames)
@@ -141,7 +147,6 @@ def export_to_csv(filename, list):
         writer.writeheader()
         for record in list:
             writer.writerow(record)
-
 
 
 print(api_key.client_key)
