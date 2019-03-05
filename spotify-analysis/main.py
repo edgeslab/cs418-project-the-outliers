@@ -170,5 +170,5 @@ print(api_key.client_secret)
 access_token = get_access_token()
 
 # Fatima's playlist which has 178 songs (test pagination)
-fatima_top_audio_features = get_playlist_audio_features("2xF8OfOFpFbojipxPndAL5", access_token)
-export_to_csv('fatima_top_audio_features.csv', fatima_top_audio_features)
+fatima_top_178 = get_playlist_audio_features("2xF8OfOFpFbojipxPndAL5", access_token)
+export_to_csv('testPlaylistsCSV/fatimaTop178.csv', fatima_top_178)
