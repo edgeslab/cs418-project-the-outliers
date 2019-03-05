@@ -82,7 +82,6 @@ def get_playlist_tracks(playlist_object):
     """
     Gets the tracks in the playlist object specified, including multiple pages, since all_tracks is a paging object
 
-
     Args:
         playlist_object(dictionary): https://developer.spotify.com/documentation/web-api/reference/object-model/#playlist-object-simplified
 
@@ -91,23 +90,20 @@ def get_playlist_tracks(playlist_object):
     """
 
     # the items in the object are playlist track objects:
-    # https://developer.spotify.com/documentation/web-api/reference/object-model/#playlist-track-object
-    
+    # https://developer.spotify.com/documentation/web-api/reference/object-model/#playlist-track-object   
     all_tracks = playlist_object["tracks"]
     tracks = []
-    i = 0
 
-    while True:
+    while len(all_tracks["items"]) > 0:
         for t in all_tracks["items"]:
-            i+=1
             track = t["track"]
             tracks.append(track)
 
-        if all_tracks["next"] is None:
-            break
-        else:
-            # get next page 
+        # get next page 
+        if all_tracks["next"] is not None:
             all_tracks = get_from_api(all_tracks["next"], access_token)
+        else:
+            all_tracks["items"] = []
 
     tracks.sort(key=lambda x: x["popularity"], reverse=True)
     return tracks
@@ -116,7 +112,6 @@ def get_playlist_tracks(playlist_object):
 def get_audio_features(tracks, access_token):
     """
     Get the audio features of the provided tracks list
-    If there are more than 100 tracks, get the next sets of audio features in a loop
 
     Args:
         tracks(list, track objects): A list of track objects 
@@ -148,7 +143,8 @@ def get_audio_features(tracks, access_token):
 
         for track in partial_response_list:
             final_result.append(track)
-        partial_tracks = partial_tracks[101:]
+        # If there are more than 100 tracks, get the next sets of audio features in a loop
+        partial_tracks = partial_tracks[(n+1):]
 
     return final_result
 
