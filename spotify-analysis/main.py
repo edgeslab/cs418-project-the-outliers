@@ -150,4 +150,4 @@ access_token = get_access_token()
 
 # Rap Caviar Playlist
 rap_caviar_audio_features = get_playlist_audio_features("37i9dQZF1DX0XUsuxWHRQd", access_token)
-export_to_csv('audioFeatures.csv',rap_caviar_audio_features)
+export_to_csv('rap_caviar_audio_features.csv',rap_caviar_audio_features)
