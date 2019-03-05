@@ -125,11 +125,7 @@ def get_audio_features(tracks, access_token):
     final_result = []
 
     while len(partial_tracks) > 0:
-
-        if len(partial_tracks) < 100:
-            n = len(partial_tracks)
-        else:
-            n = 100
+        n = min(len(partial_tracks), 100)
 
         partial_ids = ""
 
@@ -139,6 +135,7 @@ def get_audio_features(tracks, access_token):
         url = "https://api.spotify.com/v1/audio-features?ids=" + partial_ids   # gets id's 0 - 100
         partial_response = get_from_api(url, access_token)
 
+        # gets all dictionaries and puts into one list - gets rid of outside wrapper
         partial_response_list = partial_response[next(iter(partial_response))]
 
         for track in partial_response_list:
