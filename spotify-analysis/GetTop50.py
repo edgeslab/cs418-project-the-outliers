@@ -12,7 +12,7 @@ import csv
 
 access_token = main.get_access_token()
 
-ArgentinaTop50 = main.get_playlist("37i9dQZEVXbMMy2roB9myp", access_token)
+ArgentinaTop50 = main.get_playlist_audio_features("37i9dQZEVXbMMy2roB9myp", access_token)
 time.sleep(0.200)
 
 AustraliaTop50 = main.get_playlist("37i9dQZEVXbJPcfkRz0wJ0", access_token)
