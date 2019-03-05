@@ -80,7 +80,8 @@ def get_playlist(playlist_id, access_token):
 
 def get_playlist_tracks(playlist_object):
     """
-    Gets the tracks in the playlist object specified
+    Gets the tracks in the playlist object specified, including multiple pages, since all_tracks is a paging object
+
 
     Args:
         playlist_object(dictionary): https://developer.spotify.com/documentation/web-api/reference/object-model/#playlist-object-simplified
@@ -89,19 +90,24 @@ def get_playlist_tracks(playlist_object):
         a list of the tracks in that object sorted by popularity
     """
 
-    # all_tracks is a paging object:
-    # https://developer.spotify.com/documentation/web-api/reference/object-model/#paging-object
-    all_tracks = playlist_object["tracks"]
-
-    # TODO: alltracks is a paginated object, go over all of the pages in the playlist to get everything
-
     # the items in the object are playlist track objects:
     # https://developer.spotify.com/documentation/web-api/reference/object-model/#playlist-track-object
+    
+    all_tracks = playlist_object["tracks"]
     tracks = []
-    for t in all_tracks["items"]:
-        track = t["track"]
-        tracks.append(track)
-        print(track["name"])
+    i = 0
+
+    while True:
+        for t in all_tracks["items"]:
+            i+=1
+            track = t["track"]
+            tracks.append(track)
+
+        if all_tracks["next"] is None:
+            break
+        else:
+            # get next page 
+            all_tracks = get_from_api(all_tracks["next"], access_token)
 
     tracks.sort(key=lambda x: x["popularity"], reverse=True)
     return tracks
@@ -110,6 +116,7 @@ def get_playlist_tracks(playlist_object):
 def get_audio_features(tracks, access_token):
     """
     Get the audio features of the provided tracks list
+    If there are more than 100 tracks, get the next sets of audio features in a loop
 
     Args:
         tracks(list, track objects): A list of track objects 
@@ -119,15 +126,31 @@ def get_audio_features(tracks, access_token):
         a list of the audio features each object has
         https://developer.spotify.com/documentation/web-api/reference/tracks/get-several-audio-features/
     """
-    # TODO: if there are more than 100 tracks, spotify will either truncate or fail the request
-    # implement pagination
-    ids = ""
-    for t in tracks:
-        ids = ids + t['id'] + ','
+    partial_tracks = tracks
+    final_result = []
 
-    url = "https://api.spotify.com/v1/audio-features?ids=" + ids
-    data = get_from_api(url, access_token)
-    return data[next(iter(data))]
+    while len(partial_tracks) > 0:
+
+        if len(partial_tracks) < 100:
+            n = len(partial_tracks)
+        else:
+            n = 100
+
+        partial_ids = ""
+
+        for t in partial_tracks[:n]:
+            partial_ids = partial_ids + t['id'] + ','
+
+        url = "https://api.spotify.com/v1/audio-features?ids=" + partial_ids   # gets id's 0 - 100
+        partial_response = get_from_api(url, access_token)
+
+        partial_response_list = partial_response[next(iter(partial_response))]
+
+        for track in partial_response_list:
+            final_result.append(track)
+        partial_tracks = partial_tracks[101:]
+
+    return final_result
 
 
 def export_to_csv(filename, list):
@@ -153,6 +176,6 @@ print(api_key.client_key)
 print(api_key.client_secret)
 access_token = get_access_token()
 
-# Rap Caviar Playlist
-rap_caviar_audio_features = get_playlist_audio_features("37i9dQZF1DX0XUsuxWHRQd", access_token)
-export_to_csv('rap_caviar_audio_features.csv',rap_caviar_audio_features)
+# Fatima's playlist which has 178 songs (test pagination)
+fatima_top_audio_features = get_playlist_audio_features("2xF8OfOFpFbojipxPndAL5", access_token)
+export_to_csv('fatima_top_audio_features.csv', fatima_top_audio_features)
