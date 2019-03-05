@@ -91,19 +91,20 @@ def get_playlist_tracks(playlist_object):
 
     # the items in the object are playlist track objects:
     # https://developer.spotify.com/documentation/web-api/reference/object-model/#playlist-track-object   
-    all_tracks = playlist_object["tracks"]
+    tracks_response = playlist_object["tracks"]
     tracks = []
 
-    while len(all_tracks["items"]) > 0:
-        for t in all_tracks["items"]:
-            track = t["track"]
-            tracks.append(track)
+    items = tracks_response["items"]
+    while len(items) > 0:
+        for t in items:
+            tracks.append(t["track"])
 
         # get next page 
-        if all_tracks["next"] is not None:
-            all_tracks = get_from_api(all_tracks["next"], access_token)
+        if tracks_response["next"] is not None:
+            tracks_response = get_from_api(tracks_response["next"], access_token)
+            items = tracks_response["items"]
         else:
-            all_tracks["items"] = []
+            items = []
 
     tracks.sort(key=lambda x: x["popularity"], reverse=True)
     return tracks
