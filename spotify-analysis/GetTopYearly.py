@@ -24,10 +24,10 @@ top_playlists_per_year = {
 
 def createYearlyCSVs():
     for year in top_playlists_per_year.keys():
-        country_playlist_features = main.get_playlist_audio_features(
+        yearly_playlist_features = main.get_playlist_audio_features(
             top_playlists_per_year[year], access_token)
         main.export_to_csv(
-            "topTracksYearsCSV/"+year+".csv", country_playlist_features)
+            "topTracksYearsCSV/"+year+".csv", yearly_playlist_features)
 
 if __name__ == "__main__":
     createYearlyCSVs()
