@@ -66,8 +66,12 @@ top_playlists_per_country = {
     "UnitedStatesTop50": "37i9dQZEVXbLRQDuF5jeBp", 
 }
 
-for country in top_playlists_per_country.keys():
-    country_playlist_features = main.get_playlist_audio_features(
-        top_playlists_per_country[country], access_token)
-    main.export_to_csv(
-        "top50CountryCSV/"+country+".csv", country_playlist_features)
+def createCountryCSVs():
+    for country in top_playlists_per_country.keys():
+        country_playlist_features = main.get_playlist_audio_features(
+            top_playlists_per_country[country], access_token)
+        main.export_to_csv(
+            "top50CountryCSV/"+country+".csv", country_playlist_features)
+
+if __name__ == "__main__":
+    createCountryCSVs()
