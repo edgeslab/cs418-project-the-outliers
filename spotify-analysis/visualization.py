@@ -78,5 +78,3 @@ def create_features_dotplot(featurea, featureb):
     sns.stripplot(x=featurea, y=featureb, data=all_data, hue="year")
     plt.legend()
     plt.show()
-
-create_features_dotplot("loudness", "danceability")
