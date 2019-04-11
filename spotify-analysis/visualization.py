@@ -3,6 +3,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import GetTopYearly
+import GetTop50Country
 
 def get_csv(filename):
     return pd.read_csv(filename)
@@ -64,7 +65,7 @@ def makeLoudnessBarplot(countrya, countryb):
     plt.legend()
     plt.show()
 
-def create_features_dotplot(featurea, featureb):
+def create_yearly_features_dotplot(featurea, featureb):
     """
     Creates a dot plot outline of the features provided for all of the yearly data
     """
@@ -76,5 +77,28 @@ def create_features_dotplot(featurea, featureb):
         
     sns.set(style="whitegrid")
     sns.stripplot(x=featurea, y=featureb, data=all_data, hue="year")
+    plt.title("Yearly data " + featurea + ' VS ' + featureb )
     plt.legend()
     plt.show()
+
+def create_country_features_dotplot(featurea, featureb):
+    """
+    Creates a dot plot outline of the features provided for all of the yearly data
+    """
+    all_data = pd.DataFrame()
+    for country in GetTop50Country.top_playlists_per_country:
+        country_pd = get_country_csv(country)
+        country_pd["country"] = country
+        all_data = pd.concat([country_pd, all_data])
+        
+    sns.set(style="whitegrid")
+    sns.stripplot(x=featurea, y=featureb, data=all_data, hue="country")
+    plt.title("Country data " + featurea + ' VS ' + featureb )
+    plt.legend()
+    plt.show()
+
+if __name__ == "__main__":
+    makeDanceabilityBarPlot("Australia", "UnitedStates")
+    makeLoudnessBarplot("Australia", "UnitedStates")
+    create_yearly_features_dotplot("loudness", "danceability")
+    create_country_features_dotplot("loudness", "danceability")
