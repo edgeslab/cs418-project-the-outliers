@@ -11,15 +11,14 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 def predictYear():
     training_data, labels = createTrainingData()
     test_data = getTestData()
-
+    
     #vectorizer = TfidfVectorizer()
     #vectorizer.fit(training_data['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'type'])
     #training_data = vectorizer.transform(training_data['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'type'])
     #test_data = vectorizer.transform(test_data['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'type'])
 
-    # so, this not working right now
     # TODO: i believe we have to do what we did for the homework and make a vectorizor to make it a sparse array?
-    s_clf = SVC()
+    s_clf = SVC(kernel='linear')
     s_clf.fit(training_data, labels)
     s_prediction = s_clf.predict(test_data)
     print(s_prediction)
@@ -37,7 +36,7 @@ def createTrainingData():
 
     # empty data frame with all column names... 
     # is there a way to get the column names without writing them out manually lol?
-    training_data = pd.DataFrame(columns=['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'type', 'id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'time_signature', 'year'])
+    training_data = pd.DataFrame(columns=['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'time_signature', 'year'])
 
     for filename in year_filenames:
         data = pd.read_csv("topTracksYearsCSV/"+ filename) 
@@ -47,14 +46,14 @@ def createTrainingData():
     labels = training_data['year'].tolist()
 
     # remove unneccessary columns
-    training_data = training_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'time_signature', 'year'], axis=1)
+    training_data = training_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'time_signature', 'type', 'year'], axis=1)
 
     return training_data, labels
 
 def getTestData():
     #TODO: make this actually get the real new user track... enter a url, get that playlist
-    test_data = pd.read_csv("topTracksYearsCSV/2017TopTracks.csv") 
-    test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'time_signature'], axis=1)
+    test_data = pd.read_csv("topTracksYearsCSV/1960sTopTracks.csv") 
+    test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type','time_signature'], axis=1)
 
     return test_data
 
