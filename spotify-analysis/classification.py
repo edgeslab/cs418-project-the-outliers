@@ -7,10 +7,15 @@ import sklearn
 import scipy
 from sklearn.svm import SVC
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn import tree
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 
-def predictYear():
+
+def predictYear(filename, year):
     training_data, labels = createTrainingData()
-    test_data = getTestData()
+    test_data = getTestData(filename)
     
     #vectorizer = TfidfVectorizer()
     #vectorizer.fit(training_data['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'type'])
@@ -18,11 +23,64 @@ def predictYear():
     #test_data = vectorizer.transform(test_data['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'type'])
 
     # TODO: i believe we have to do what we did for the homework and make a vectorizor to make it a sparse array?
+    # dtc = predict_dtc(training_data, labels, test_data)
+    rfc = predict_rfc(training_data, labels, test_data)
+    # svc = predict_svc(training_data, labels, test_data)
+    # lr = predict_lr(training_data, labels, test_data)
+
+    # l = [year for i in range(len(test_data))] 
+    print(rfc)
+    # prediction_accuracy(dtc, rfc, svc, lr, l)
+
+
+def predict_rfc(training_data, labels, test_data):
+    #RandomForestClassifier
+    rfc_clf = RandomForestClassifier()
+    rfc_clf.fit(training_data,labels)
+    rfc_prediction = rfc_clf.predict(test_data)
+    # print('RandomForestClassifier')
+    # print(rfc_prediction)
+    return rfc_prediction
+
+def predict_dtc(training_data, labels, test_data):
+    # DecisionTreeClassifier
+    dtc_clf = tree.DecisionTreeClassifier()
+    dtc_clf = dtc_clf.fit(training_data,labels)
+    dtc_prediction = dtc_clf.predict(test_data)
+    # print('DecisionTreeClassifier')
+    # print(dtc_prediction)
+    return dtc_prediction
+
+def predict_svc(training_data, labels, test_data):
+    # SupportVectorClassifier
     s_clf = SVC(kernel='linear')
     s_clf.fit(training_data, labels)
     s_prediction = s_clf.predict(test_data)
-    print(s_prediction)
+    # print('SupportVectorClassifier')
+    # print(s_prediction)
+    return s_prediction
 
+def predict_lr(training_data, labels, test_data):
+    #LogisticRegression
+    l_clf = LogisticRegression()
+    l_clf.fit(training_data,labels)
+    l_prediction = l_clf.predict(test_data)
+    # print('LogisticRegression')
+    # print (l_prediction)
+    return l_prediction
+
+def prediction_accuracy(dtc, rfc, svc, lr, test_labels):
+    #accuracy scores
+
+    dtc_tree_acc = accuracy_score(dtc,test_labels)
+    rfc_acc = accuracy_score(rfc,test_labels)
+    l_acc = accuracy_score(lr,test_labels)
+    s_acc = accuracy_score(svc,test_labels)
+
+    classifiers = ['Decision Tree', 'Random Forest', 'Logistic Regression' , 'SVC']
+    accuracy = np.array([dtc_tree_acc, rfc_acc, l_acc, s_acc])
+    max_acc = np.argmax(accuracy)
+    print(classifiers[max_acc] + ' is the best classifier for this problem')
 
 def getYearlyFilenames():
     # get list of all files in years directory
@@ -50,13 +108,13 @@ def createTrainingData():
 
     return training_data, labels
 
-def getTestData():
+def getTestData(filename):
     #TODO: make this actually get the real new user track... enter a url, get that playlist
-    test_data = pd.read_csv("topTracksYearsCSV/1960sTopTracks.csv") 
+    test_data = pd.read_csv("topTracksYearsCSV/" + filename + ".csv") 
     test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type','time_signature'], axis=1)
 
     return test_data
 
 #TODO: get rid of main... it's only for testing purposes
 if __name__ == "__main__":
-    predictYear()
+    predictYear('2017TopTracks', '2017')
