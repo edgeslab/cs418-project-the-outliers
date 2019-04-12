@@ -134,5 +134,7 @@ def create_country_features_dotplot(featurea, featureb):
 if __name__ == "__main__":
     makeDanceabilityBarPlot("Australia", "UnitedStates")
     makeLoudnessBarplot("Australia", "UnitedStates")
+    makeEnergyBarplot("Argentina", "Belgium")
+    makeAcousticnessBarplot("Argentina", "Belgium")
     create_yearly_features_dotplot("loudness", "danceability")
     create_country_features_dotplot("loudness", "danceability")
