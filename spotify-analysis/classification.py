@@ -17,20 +17,7 @@ def predictYear(filename, year):
     training_data, labels = createTrainingData()
     test_data = getTestData(filename)
     
-    #vectorizer = TfidfVectorizer()
-    #vectorizer.fit(training_data['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'type'])
-    #training_data = vectorizer.transform(training_data['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'type'])
-    #test_data = vectorizer.transform(test_data['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'type'])
-
-    # TODO: i believe we have to do what we did for the homework and make a vectorizor to make it a sparse array?
-    # dtc = predict_dtc(training_data, labels, test_data)
     rfc = predict_rfc(training_data, labels, test_data)
-    # svc = predict_svc(training_data, labels, test_data)
-    # lr = predict_lr(training_data, labels, test_data)
-
-    # l = [year for i in range(len(test_data))] 
-    print(rfc)
-    # prediction_accuracy(dtc, rfc, svc, lr, l)
 
 
 def predict_rfc(training_data, labels, test_data):
@@ -38,8 +25,6 @@ def predict_rfc(training_data, labels, test_data):
     rfc_clf = RandomForestClassifier()
     rfc_clf.fit(training_data,labels)
     rfc_prediction = rfc_clf.predict(test_data)
-    # print('RandomForestClassifier')
-    # print(rfc_prediction)
     return rfc_prediction
 
 def predict_dtc(training_data, labels, test_data):
@@ -47,8 +32,6 @@ def predict_dtc(training_data, labels, test_data):
     dtc_clf = tree.DecisionTreeClassifier()
     dtc_clf = dtc_clf.fit(training_data,labels)
     dtc_prediction = dtc_clf.predict(test_data)
-    # print('DecisionTreeClassifier')
-    # print(dtc_prediction)
     return dtc_prediction
 
 def predict_svc(training_data, labels, test_data):
@@ -56,8 +39,6 @@ def predict_svc(training_data, labels, test_data):
     s_clf = SVC(kernel='linear')
     s_clf.fit(training_data, labels)
     s_prediction = s_clf.predict(test_data)
-    # print('SupportVectorClassifier')
-    # print(s_prediction)
     return s_prediction
 
 def predict_lr(training_data, labels, test_data):
@@ -65,8 +46,6 @@ def predict_lr(training_data, labels, test_data):
     l_clf = LogisticRegression()
     l_clf.fit(training_data,labels)
     l_prediction = l_clf.predict(test_data)
-    # print('LogisticRegression')
-    # print (l_prediction)
     return l_prediction
 
 def prediction_accuracy(dtc, rfc, svc, lr, test_labels):
