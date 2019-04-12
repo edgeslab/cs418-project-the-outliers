@@ -65,6 +65,40 @@ def makeLoudnessBarplot(countrya, countryb):
     plt.legend()
     plt.show()
 
+def makeEnergyBarplot(countrya, countryb):
+    """
+    Creates a seaborn distribution plot for the energy of the
+    two countries provided.
+
+    Args:
+        countrya, countryb (string): the two countries to compare
+    """
+    countryAcsv = get_country_csv(countrya)
+    countryBcsv = get_country_csv(countryb)
+    sns.distplot(countryAcsv['energy'], label=countrya + ' Energy')
+    sns.distplot(countryBcsv['energy'], label=countryb + ' Energy')
+    plt.title(countrya + ' VS. ' + countryb + ' energy')
+    plt.xlabel('Energy')
+    plt.legend()
+    plt.show()    
+
+def makeAcousticnessBarplot(countrya, countryb):
+    """
+    Creates a seaborn distribution plot for the acousticness of the
+    two countries provided.
+
+    Args:
+        countrya, countryb (string): the two countries to compare
+    """
+    countryAcsv = get_country_csv(countrya)
+    countryBcsv = get_country_csv(countryb)
+    sns.distplot(countryAcsv['acousticness'], label=countrya + ' Acousticness')
+    sns.distplot(countryBcsv['acousticness'], label=countryb + ' Acousticness')
+    plt.title(countrya + ' VS ' + countryb + ' acousticness')
+    plt.xlabel('Acousticness')
+    plt.legend()
+    plt.show()    
+    
 def create_yearly_features_dotplot(featurea, featureb):
     """
     Creates a dot plot outline of the features provided for all of the yearly data
