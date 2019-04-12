@@ -189,10 +189,8 @@ def export_to_csv(filename, list):
             writer.writerow(record)
 
 
-print(api_key.client_key)
-print(api_key.client_secret)
-access_token = get_access_token()
-
-# Fatima's playlist which has 178 songs (test pagination)
-fatima_top_178 = get_playlist_audio_features("2xF8OfOFpFbojipxPndAL5", access_token)
-export_to_csv('testPlaylistsCSV/fatimaTop178.csv', fatima_top_178)
+if __name__ == "__main__":
+    access_token = get_access_token()
+    # Fatima's playlist which has 178 songs (test pagination)
+    fatima_top_178 = get_playlist_audio_features("2xF8OfOFpFbojipxPndAL5", access_token)
+    export_to_csv('testPlaylistsCSV/fatimaTop178.csv', fatima_top_178)
