@@ -78,7 +78,7 @@ def create_yearly_features_dotplot(featurea, featureb):
     sns.set(style="whitegrid")
     sns.stripplot(x=featurea, y=featureb, data=all_data, hue="year")
     plt.title("Yearly data " + featurea + ' VS ' + featureb )
-    plt.legend()
+    plt.legend(bbox_to_anchor=(0, 1), loc='upper left', ncol=1)
     plt.show()
 
 def create_country_features_dotplot(featurea, featureb):
@@ -94,7 +94,6 @@ def create_country_features_dotplot(featurea, featureb):
     sns.set(style="whitegrid")
     sns.stripplot(x=featurea, y=featureb, data=all_data, hue="country")
     plt.title("Country data " + featurea + ' VS ' + featureb )
-    plt.legend()
     plt.show()
 
 if __name__ == "__main__":
