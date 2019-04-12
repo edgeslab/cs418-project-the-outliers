@@ -125,8 +125,8 @@ def create_country_features_dotplot(featurea, featureb, countries=[]):
     plt.show()
 
 if __name__ == "__main__":
+    create_yearly_features_dotplot("danceability", "loudness")
     makeDanceabilityBarPlot("Australia", "UnitedStates")
     makeLoudnessBarplot("Australia", "UnitedStates")
     make_country_barplot("loudness")
-    create_yearly_features_dotplot("loudness", "danceability")
     create_country_features_dotplot("loudness", "danceability", ["UnitedStates", "Spain", "Sweden", "NewZealand", "Mexica"])
