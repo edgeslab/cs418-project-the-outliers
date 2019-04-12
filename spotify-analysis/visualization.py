@@ -50,6 +50,27 @@ def makeDanceabilityBarPlot(countrya, countryb):
     plt.legend()
     plt.show()
 
+def make_country_barplot(feature, countries=[]):
+    """
+    Creates a seaborn distribution plot for the loudness of the
+    two countries provided.
+
+    Args:
+        feature(string): the feature to plot
+        countries(list, string): the countries to compare
+    """
+    if len(countries) == 0:
+        countries = GetTop50Country.top_playlists_per_country.keys()
+
+    for country in countries:
+        countrycsv = get_country_csv(country)
+        sns.distplot(countrycsv[feature], label=country)
+
+    plt.title(feature + ' by country')
+    plt.xlabel(feature)
+    if(len(countries) < 10):
+        plt.legend()
+    plt.show()
 
 def makeLoudnessBarplot(countrya, countryb):
     """
@@ -90,7 +111,7 @@ def create_country_features_dotplot(featurea, featureb, countries=[]):
     Creates a dot plot outline of the features provided for all of the yearly data
     """
     if len(countries) == 0:
-        countries = GetTop50Country.top_playlists_per_country.keys
+        countries = GetTop50Country.top_playlists_per_country.keys()
 
     all_data = pd.DataFrame()
     for country in countries:
@@ -106,5 +127,6 @@ def create_country_features_dotplot(featurea, featureb, countries=[]):
 if __name__ == "__main__":
     makeDanceabilityBarPlot("Australia", "UnitedStates")
     makeLoudnessBarplot("Australia", "UnitedStates")
+    make_country_barplot("loudness")
     create_yearly_features_dotplot("loudness", "danceability")
     create_country_features_dotplot("loudness", "danceability", ["UnitedStates", "Spain", "Sweden", "NewZealand", "Mexica"])
