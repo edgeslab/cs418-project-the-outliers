@@ -25,7 +25,7 @@ top_playlists_per_year = {
 
 def testAllYears():
     for year in top_playlists_per_year.keys():
-        classification.predictYear(year, year[:4])
+        classification.predictYear(year)
 
 
 if __name__ == "__main__":

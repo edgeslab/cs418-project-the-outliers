@@ -13,12 +13,15 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
 
-def predictYear(filename, year):
+def predictYear(filename):
     training_data, labels = createTrainingData()
     test_data = getTestData(filename)
     
+    # determined to have the best accuracy as compared to the other options
     rfc = predict_rfc(training_data, labels, test_data)
+    year =  getClosestYear(rfc)
 
+    return rfc, year
 
 def predict_rfc(training_data, labels, test_data):
     #RandomForestClassifier
@@ -89,11 +92,30 @@ def createTrainingData():
 
 def getTestData(filename):
     #TODO: make this actually get the real new user track... enter a url, get that playlist
-    test_data = pd.read_csv("topTracksYearsCSV/" + filename + ".csv") 
+    test_data = pd.read_csv("testPlaylistsCSV/" + filename + ".csv") 
     test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type','time_signature'], axis=1)
 
     return test_data
 
+def getClosestYear(results):
+    """
+    Finds the average from the results for the years in the results and returns the year that is closest
+    to one of the available playlist years
+    """
+    sum = 0
+    for year in results:
+        sum = sum + int(year)
+    avg = sum / len(results)
+
+    year_files = getYearlyFilenames()
+    years = []
+    for file in year_files:
+        years.append(file[:4])
+
+    predicted_year = min(years, key=lambda x:abs(int(x)-avg))
+
+    return predicted_year
+
 #TODO: get rid of main... it's only for testing purposes
 if __name__ == "__main__":
-    predictYear('2017TopTracks', '2017')
+    all_res, year = predictYear('2018TopTracks')
