@@ -33,7 +33,6 @@ top_playlists_per_country = {
     "Iceland": "37i9dQZEVXbKMzVsSGQ49S",
     "Indonesia": "37i9dQZEVXbObFQZ3JLcXt",
     "Ireland": "37i9dQZEVXbKM896FDX8L1",
-    "Israel": "37i9dQZEVXbJ6IpvItkve3",
     "Italy": "37i9dQZEVXbIQnj7RRhdSX",
     "Japan": "37i9dQZEVXbKXQ4mDTEBXq",
     "Lavtia": "37i9dQZEVXbJWuzDrTxbKS",
