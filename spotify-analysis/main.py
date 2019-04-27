@@ -60,7 +60,7 @@ def get_playlist_audio_features(playlist_id, access_token):
         https://developer.spotify.com/documentation/web-api/reference/tracks/get-several-audio-features/
     """
     playlist = get_playlist(playlist_id, access_token)
-    playlist_tracks = get_playlist_tracks(playlist)
+    playlist_tracks = get_playlist_tracks(playlist, access_token)
     return get_audio_features(playlist_tracks, access_token)
 
 def get_playlist(playlist_id, access_token):
@@ -78,7 +78,7 @@ def get_playlist(playlist_id, access_token):
     return get_from_api(url, access_token)
 
 
-def get_playlist_tracks(playlist_object):
+def get_playlist_tracks(playlist_object, access_token):
     """
     Gets the tracks in the playlist object specified, including multiple pages, since all_tracks is a paging object
 
@@ -165,6 +165,8 @@ def export_to_csv(filename, list):
         for record in list:
             writer.writerow(record)
 
+def export_pd_to_csv(filename, dataframe):
+    dataframe.to_csv(filename)
 
 if __name__ == "__main__":
     access_token = get_access_token()
