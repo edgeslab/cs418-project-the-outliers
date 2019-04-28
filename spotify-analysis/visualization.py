@@ -233,7 +233,7 @@ def dance_vs_energy_graph(years=[]):
 
 
 if __name__ == "__main__":
-    duration_graph(years=['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'])
+    duration_graph(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'])
     dance_vs_energy_graph(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'])
     speechiness_graph(['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
     loudness_graph(['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
