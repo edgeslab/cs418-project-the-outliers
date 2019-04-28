@@ -2,6 +2,7 @@ import main
 import time
 import json
 import pandas as pd
+import spotify_api
 
 access_token = main.get_access_token()
 
