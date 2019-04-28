@@ -1,8 +1,8 @@
-import main
+import spotify_api
 import time
 import json
 
-access_token = main.get_access_token()
+access_token = spotify_api.get_access_token()
 
 top_playlists_per_country = {
     "Argentina": "37i9dQZEVXbMMy2roB9myp",
@@ -67,9 +67,9 @@ top_playlists_per_country = {
 
 def createCountryCSVs():
     for country in top_playlists_per_country.keys():
-        country_playlist_features = main.get_playlist_audio_features(
+        country_playlist_features = spotify_api.get_playlist_audio_features(
             top_playlists_per_country[country], access_token)
-        main.export_to_csv(
+        spotify_api.export_to_csv(
             "top50CountryCSV/"+country+"Top50.csv", country_playlist_features)
 
 if __name__ == "__main__":

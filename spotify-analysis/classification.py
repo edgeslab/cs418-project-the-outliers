@@ -2,7 +2,6 @@ from os import walk
 
 import pandas as pd
 import numpy as np
-
 import sklearn 
 import scipy
 from sklearn.svm import SVC
@@ -11,8 +10,30 @@ from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
+import spotify_api
 
+def predict_playlist_year(playlist_id):
+    training_data, labels = createTrainingData()
+    data = spotify_api.get_playlist_audio_features(playlist_id)
+    test_data = pd.io.json.json_normalize(data)
+    test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type','time_signature'], axis=1)
 
+    print(test_data.shape)
+    print(training_data.shape)
+    rfc = predict_rfc(training_data, labels, test_data)
+    return getClosestYear(rfc)
+
+def predict_user_song_year(song_id):
+    training_data, labels = createTrainingData()
+    song_api_response = spotify_api.get_song_audio_features(song_id)
+    test_data = pd.io.json.json_normalize(song_api_response)
+    test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type','time_signature'], axis=1)
+
+    print(test_data.shape)
+    print(training_data.shape)
+    rfc = predict_rfc(training_data, labels, test_data)
+    return getClosestYear(rfc)
+    
 def predictYear(filename):
     training_data, labels = createTrainingData()
     test_data = getTestData(filename)
