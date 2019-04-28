@@ -1,9 +1,9 @@
-import spotify_api
+import main
 import time
 import json
 import pandas as pd
 
-access_token = spotify_api.get_access_token()
+access_token = main.get_access_token()
 
 top_playlists_per_year = {
     "2018": "37i9dQZF1DX1HUbZS4LEyL",
@@ -24,14 +24,15 @@ top_playlists_per_year = {
 }
 
 def createYearlyCSVs():
-    all_years = pd.DataFrame()	   
-    for year in top_playlists_per_year.keys():	    
-        yearly_playlist_features = spotify_api.get_playlist_audio_features(	      
-            top_playlists_per_year[year], access_token)	           
-        year_pd = pd.DataFrame(yearly_playlist_features)	       
-        year_pd["year"] = year	      
-        all_years = all_years.append(year_pd)	
-    spotify_api.export_pd_to_csv(
+    all_years = pd.DataFrame()
+    for year in top_playlists_per_year.keys():
+        yearly_playlist_features = main.get_playlist_audio_features(
+            top_playlists_per_year[year], access_token)
+        year_pd = pd.DataFrame(yearly_playlist_features)
+        year_pd["year"] = year
+        all_years = all_years.append(year_pd)
+
+    main.export_pd_to_csv(
         "topTracksYearsCSV/AllYearsTopTracks.csv", all_years)
 
 if __name__ == "__main__":
