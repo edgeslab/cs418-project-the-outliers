@@ -105,7 +105,7 @@ def create_country_features_dotplot(featurea, featureb, countries=[]):
     plt.legend(bbox_to_anchor=(-.05,1.05), loc="upper right")
     plt.show()
     
-    def liveness_graph(countries=[]):
+def liveness_graph(countries=[]):
     if len(countries) == 0:
         countries = GetTop50Country.top_playlists_per_country.keys()
 
