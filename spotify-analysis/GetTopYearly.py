@@ -1,10 +1,9 @@
-import main
 import time
 import json
 import pandas as pd
 import spotify_api
 
-access_token = main.get_access_token()
+access_token = spotify_api.get_access_token()
 
 top_playlists_per_year = {
     "2018": "37i9dQZF1DX1HUbZS4LEyL",
