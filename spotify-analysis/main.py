@@ -12,12 +12,20 @@ def form():
 def submitted_form():
     playlist_id = request.form['playlist_id']
     song_id = request.form['song_id']
-    _, year = classification.predictYear('2018TopTracks')
-    logging.warning("the predicted year was" + str(year))
+
+    song_year = ""
+    if song_id != "":
+        song_year = classification.predict_user_song_year(song_id)
+    
+    playlist_year = ""
+    if playlist_id != "":
+        playlist_year = classification.predict_playlist_year(playlist_id)
+
+    logging.warning("the predicted year was " + str(song_year))
     return render_template(
         'submitted_form.html',
         playlist_id=playlist_id,
-        song_id=song_id, prediction=str(year))
+        song_id=song_id, song_prediction=str(song_year), playlist_prediction=str(playlist_year))
 
 @app.errorhandler(500)
 def server_error(e):

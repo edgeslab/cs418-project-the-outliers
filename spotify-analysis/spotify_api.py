@@ -49,16 +49,28 @@ def get_from_api(url, access_token):
     response = requests.get(url, headers=headers)
     return response.json()
 
-def get_playlist_audio_features(playlist_id, access_token):
+def get_song_audio_features(song_id, access_token=""):
+    if access_token == "": 
+        access_token = get_access_token()
+
+    url = "https://api.spotify.com/v1/audio-features/" + song_id
+    data =  get_from_api(url, access_token)
+    return data
+
+
+def get_playlist_audio_features(playlist_id, access_token=""):
     """
     Returns the list of playlist features for each track in the playlist_id provided
     Args: 
         playlist_id(string): the playlist_id to get from spotify
-        access_token(string): the access token to use
+        access_token(string): the access token to use, if empty, will regenrate a new access_token
     Returns:
         list of Audio Features objects per track in the playlist
         https://developer.spotify.com/documentation/web-api/reference/tracks/get-several-audio-features/
     """
+    if access_token == "": 
+        access_token = get_access_token()
+    
     playlist = get_playlist(playlist_id, access_token)
     playlist_tracks = get_playlist_tracks(playlist, access_token)
     return get_audio_features(playlist_tracks, access_token)
