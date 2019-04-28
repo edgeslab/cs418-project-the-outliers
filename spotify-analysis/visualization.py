@@ -104,9 +104,143 @@ def create_country_features_dotplot(featurea, featureb, countries=[]):
     plt.title("Country data " + featurea + ' VS ' + featureb )
     plt.legend(bbox_to_anchor=(-.05,1.05), loc="upper right")
     plt.show()
+    
+    def liveness_graph(countries=[]):
+    if len(countries) == 0:
+        countries = GetTop50Country.top_playlists_per_country.keys()
+
+    liveness_means = []
+    country_list = []
+
+    for country in countries:
+        data = get_country_csv(country)
+        liveness_means.append(data['liveness'].mean())
+        country_list.append(country)
+
+    bar_plot = sns.barplot(x=country_list, y=liveness_means, palette='deep')
+    plt.title('Music Liveness in Most Populated Countries in Spotify')
+    plt.xlabel('Country')
+    plt.ylabel('Liveness')
+    plt.show()
+
+
+def acousticness_graph(countries=[]):
+    if len(countries) == 0:
+        countries = GetTop50Country.top_playlists_per_country.keys()
+
+    acousticness_means = []
+    country_list = []
+    for country in countries:
+        data = get_country_csv(country)
+        acousticness_means.append(data['acousticness'].mean())
+        country_list.append(country)
+
+    bar_plot = sns.barplot(x=country_list, y=acousticness_means, palette='deep')
+    plt.title('Music Acousticness in Most Populated Countries in Spotify')
+    plt.xlabel('Country')
+    plt.ylabel('Acousticness')
+    plt.show()
+
+
+def danceability_graph(years=[]):
+    if len(years) == 0:
+        years = GetTopYearly.top_playlists_per_year.keys()
+
+    danceability_means = []
+
+    for year in years:
+        data = get_yearly_csv(year)
+        danceability_means.append(data['danceability'].mean())
+
+    plot = sns.pointplot(x=years, y=danceability_means, label="Danceabillity", linestyle="-")
+    plt.title('Danceability of Top Songs From 2010-2018')
+    plt.xlabel('Years')
+    plt.ylabel('Danceability')
+    plt.show()
+
+
+def duration_graph(years=[]):
+    if len(years) == 0:
+        years = GetTopYearly.top_playlists_per_year.keys()
+
+    duration_means = []
+    for year in years:
+        data = get_yearly_csv(year)
+        duration_means.append(data['duration_ms'].mean())
+
+    plot = sns.pointplot(x=years, y=duration_means, label="Duration", linestyle="-")
+    plt.title('Duration of Top Songs From 2010-2018')
+    plt.xlabel('Years')
+    plt.ylabel('Duration')
+    plt.show()
+
+
+def loudness_graph(countries=[]):
+    if len(countries) == 0:
+        countries = GetTop50Country.top_playlists_per_country.keys()
+
+    loudness_means = []
+    country_list = []
+    for country in countries:
+        data = get_country_csv(country)
+        loudness_means.append(data['loudness'].mean())
+        country_list.append(country)
+
+    bar_plot = sns.barplot(x=country_list, y=loudness_means, palette='deep')
+    plt.title('Music Loudness in Most Populated Countries in Spotify')
+    plt.xlabel('Country')
+    plt.ylabel('Loudness')
+    plt.show()
+
+
+def speechiness_graph(countries=[]):
+    if len(countries) == 0:
+        countries = GetTop50Country.top_playlists_per_country.keys()
+
+    speechiness_means = []
+    country_list = []
+    for country in countries:
+        data = get_country_csv(country)
+        speechiness_means.append(data['speechiness'].mean())
+        country_list.append(country)
+
+    bar_plot = sns.barplot(x=country_list, y=speechiness_means, palette='deep')
+    plt.title('Music Speechiness in Most Populated Countries in Spotify')
+    plt.xlabel('Country')
+    plt.ylabel('Speechiness')
+    plt.show()
+
+
+def dance_vs_energy_graph(years=[]):
+    if len(years) == 0:
+        years = GetTopYearly.top_playlists_per_year.keys()
+    danceability_means = []
+    year_list = []
+    energy_means = []
+    year_list2 = []
+    for year in years:
+        data = get_yearly_csv(year)
+        danceability_means.append(data['danceability'].mean())
+        year_list.append(year)
+        energy_means.append(data['energy'].mean())
+        year_list2.append(year)
+    plot = sns.pointplot(x=year_list, y=danceability_means, label="Danceability", linestyle="-", color='purple')
+    plot2 = sns.pointplot(x=year_list2, y=energy_means, label="Energy", linestyle="-", color='green')
+    plt.title('Danceability VS Energy of Top Songs From 2010-2018')
+    plt.xlabel('year')
+    plt.ylabel('Dance VS Energy')
+    plt.show()
+
 
 if __name__ == "__main__":
-    create_yearly_features_dotplot("danceability", "loudness")
+    duration_graph(years=['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'])
+    dance_vs_energy_graph(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'])
+    speechiness_graph(['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
+    loudness_graph(['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
+    liveness_graph(['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
+    acousticness_graph(['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
+    danceability_graph(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'])
+create_yearly_features_dotplot("danceability", "loudness")
     makeDanceabilityBarPlot("Australia", "UnitedStates")
     makeLoudnessBarplot("Australia", "UnitedStates")
     make_country_barplot("loudness")
