@@ -22,17 +22,6 @@ def get_country_csv(country):
     """
     return get_csv('top50CountryCSV/' + country + "Top50.csv")
 
-def get_yearly_csv(year):
-    """
-    Opens the TopTracks.csv file for the year provided.
-
-    Args:
-        country(string): the year to open
-    Returns:
-        pandas dataset
-    """
-    return get_csv('topTracksYearsCSV/' + year + "TopTracks.csv")
-
 def makeDanceabilityBarPlot(countrya, countryb):
     """
     Creates a seaborn distribution plot for the dancability of the
@@ -93,12 +82,8 @@ def create_yearly_features_dotplot(featurea, featureb):
     """
     Creates a dot plot outline of the features provided for all of the yearly data
     """
-    all_data = pd.DataFrame()
-    for year in GetTopYearly.top_playlists_per_year:
-        year_pd = get_yearly_csv(year)
-        year_pd["year"] = year
-        all_data = pd.concat([year_pd, all_data])
-        
+    all_data = get_csv('topTracksYearsCSV/AllYearsTopTracks.csv')
+
     # idk why but this stripplot function takes 5ever to run - I'm guessing its doing
     # a group_by underneath the hoods and that is what is causing the execution to
     sns.stripplot(x=featurea, y=featureb, data=all_data, hue="year")
@@ -113,12 +98,8 @@ def create_country_features_dotplot(featurea, featureb, countries=[]):
     if len(countries) == 0:
         countries = GetTop50Country.top_playlists_per_country.keys()
 
-    all_data = pd.DataFrame()
-    for country in countries:
-        country_pd = get_country_csv(country)
-        country_pd["country"] = country
-        all_data = pd.concat([country_pd, all_data])
-        
+    all_data = get_csv('topTracksYearsCSV/AllYearsTopTracks.csv')
+
     sns.stripplot(x=featurea, y=featureb, data=all_data, hue="country")
     plt.title("Country data " + featurea + ' VS ' + featureb )
     plt.legend(bbox_to_anchor=(-.05,1.05), loc="upper right")
