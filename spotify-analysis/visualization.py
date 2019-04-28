@@ -98,8 +98,8 @@ def create_yearly_features_dotplot(featurea, featureb):
     # idk why but this stripplot function takes 5ever to run - I'm guessing its doing
     # a group_by underneath the hoods and that is what is causing the execution to
     sns.stripplot(x=featurea, y=featureb, data=all_data, hue="year")
-    plt.title("Yearly data " + featurea + ' VS ' + featureb )
-    plt.legend(bbox_to_anchor=(-.05,1.05), loc="upper right")
+    plt.title("Yearly data " + featurea + ' VS ' + featureb)
+    plt.legend(bbox_to_anchor=(-.05, 1.05), loc="upper right")
     plt.show()
 
 def create_country_features_dotplot(featurea, featureb, countries=[]):
@@ -112,10 +112,10 @@ def create_country_features_dotplot(featurea, featureb, countries=[]):
     all_data = get_csv('topTracksYearsCSV/AllYearsTopTracks.csv')
 
     sns.stripplot(x=featurea, y=featureb, data=all_data, hue="country")
-    plt.title("Country data " + featurea + ' VS ' + featureb )
-    plt.legend(bbox_to_anchor=(-.05,1.05), loc="upper right")
+    plt.title("Country data " + featurea + ' VS ' + featureb)
+    plt.legend(bbox_to_anchor=(-.05, 1.05), loc="upper right")
     plt.show()
-    
+
 def liveness_graph(countries=[]):
     if len(countries) == 0:
         countries = GetTop50Country.top_playlists_per_country.keys()
@@ -128,7 +128,7 @@ def liveness_graph(countries=[]):
         liveness_means.append(data['liveness'].mean())
         country_list.append(country)
 
-    bar_plot = sns.barplot(x=country_list, y=liveness_means, palette='deep')
+    sns.barplot(x=country_list, y=liveness_means, palette='deep')
     plt.title('Music Liveness in Most Populated Countries in Spotify')
     plt.xlabel('Country')
     plt.ylabel('Liveness')
@@ -146,7 +146,7 @@ def acousticness_graph(countries=[]):
         acousticness_means.append(data['acousticness'].mean())
         country_list.append(country)
 
-    bar_plot = sns.barplot(x=country_list, y=acousticness_means, palette='deep')
+    sns.barplot(x=country_list, y=acousticness_means, palette='deep')
     plt.title('Music Acousticness in Most Populated Countries in Spotify')
     plt.xlabel('Country')
     plt.ylabel('Acousticness')
@@ -163,7 +163,7 @@ def danceability_graph(years=[]):
         data = get_yearly_csv(year)
         danceability_means.append(data['danceability'].mean())
 
-    plot = sns.pointplot(x=years, y=danceability_means, label="Danceabillity", linestyle="-")
+    sns.pointplot(x=years, y=danceability_means, label="Danceabillity", linestyle="-")
     plt.title('Danceability of Top Songs From 2010-2018')
     plt.xlabel('Years')
     plt.ylabel('Danceability')
@@ -179,7 +179,7 @@ def duration_graph(years=[]):
         data = get_yearly_csv(year)
         duration_means.append(data['duration_ms'].mean())
 
-    plot = sns.pointplot(x=years, y=duration_means, label="Duration", linestyle="-")
+    sns.pointplot(x=years, y=duration_means, label="Duration", linestyle="-")
     plt.title('Duration of Top Songs From 2010-2018')
     plt.xlabel('Years')
     plt.ylabel('Duration')
@@ -197,7 +197,7 @@ def loudness_graph(countries=[]):
         loudness_means.append(data['loudness'].mean())
         country_list.append(country)
 
-    bar_plot = sns.barplot(x=country_list, y=loudness_means, palette='deep')
+    sns.barplot(x=country_list, y=loudness_means, palette='deep')
     plt.title('Music Loudness in Most Populated Countries in Spotify')
     plt.xlabel('Country')
     plt.ylabel('Loudness')
@@ -215,7 +215,7 @@ def speechiness_graph(countries=[]):
         speechiness_means.append(data['speechiness'].mean())
         country_list.append(country)
 
-    bar_plot = sns.barplot(x=country_list, y=speechiness_means, palette='deep')
+    sns.barplot(x=country_list, y=speechiness_means, palette='deep')
     plt.title('Music Speechiness in Most Populated Countries in Spotify')
     plt.xlabel('Country')
     plt.ylabel('Speechiness')
@@ -225,21 +225,21 @@ def speechiness_graph(countries=[]):
 def dance_vs_energy_graph(years=[]):
     if len(years) == 0:
         years = GetTopYearly.top_playlists_per_year.keys()
-    danceability_means = []
-    year_list = []
-    energy_means = []
-    year_list2 = []
+
+    data = pd.DataFrame()
     for year in years:
-        data = get_yearly_csv(year)
-        danceability_means.append(data['danceability'].mean())
-        year_list.append(year)
-        energy_means.append(data['energy'].mean())
-        year_list2.append(year)
-    plot = sns.pointplot(x=year_list, y=danceability_means, label="Danceability", linestyle="-", color='purple')
-    plot2 = sns.pointplot(x=year_list2, y=energy_means, label="Energy", linestyle="-", color='green')
+        year_data = get_yearly_csv(year)
+        features = [
+            {'feature': 'danceability', 'mean': year_data['danceability'].mean(), 'year':year },  
+            {'feature': 'energy', 'mean': year_data['energy'].mean(), 'year':year }
+        ]
+        data = data.append(pd.io.json.json_normalize(features))
+
+    sns.pointplot(x="year", y="mean", data=data, hue="feature", linestyle="-", color='purple')
     plt.title('Danceability VS Energy of Top Songs From 2010-2018')
     plt.xlabel('year')
     plt.ylabel('Dance VS Energy')
+    plt.legend()
     plt.show()
 
 
