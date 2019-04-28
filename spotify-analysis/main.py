@@ -146,7 +146,28 @@ def get_audio_features(tracks, access_token):
 
     return final_result
 
+def get_track_genre(track, access_token):
+    """
+    Get the genre of the provided track
 
+    Args:
+        track(track objects): A track object
+        https://developer.spotify.com/documentation/web-api/reference/object-model/#track-object-full
+        access_token(string): the access token to use to make api requests.
+    Returns:
+        the genre(s) as a list of strings
+    """
+    # get the track's artists and retrieve their genres
+    genres = []
+    artists = track['artists']
+
+    for a in artists:
+        url = 'https://api.spotify.com/v1/artists/' + a['id']
+        response = get_from_api(url, access_token)
+        genres.extend(response['genres'])
+   
+    return genres
+    
 def export_to_csv(filename, list):
     """
     Get the audio features of the provided tracks list
