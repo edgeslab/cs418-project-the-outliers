@@ -22,7 +22,18 @@ def get_country_csv(country):
     """
     return get_csv('top50CountryCSV/' + country + "Top50.csv")
 
-def makeDanceabilityBarPlot(countrya, countryb):
+def get_yearly_csv(year):
+    """
+    Opens the Top50.csv file for the year provided.
+
+    Args:
+        country(string): the country to open
+    Returns:
+        pandas dataset
+    """
+    return get_csv('topTracksYearsCSV/' + year + "TopTracks.csv")
+
+def make_danceability_barplot(countrya, countryb):
     """
     Creates a seaborn distribution plot for the dancability of the
     two countries provided.
@@ -61,7 +72,7 @@ def make_country_barplot(feature, countries=[]):
         plt.legend()
     plt.show()
 
-def makeLoudnessBarplot(countrya, countryb):
+def make_loudness_barplot(countrya, countryb):
     """
     Creates a seaborn distribution plot for the loudness of the
     two countries provided.
@@ -240,8 +251,8 @@ if __name__ == "__main__":
     liveness_graph(['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
     acousticness_graph(['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
     danceability_graph(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'])
-create_yearly_features_dotplot("danceability", "loudness")
-    makeDanceabilityBarPlot("Australia", "UnitedStates")
-    makeLoudnessBarplot("Australia", "UnitedStates")
+    create_yearly_features_dotplot("danceability", "loudness")
+    make_danceability_barplot("Australia", "UnitedStates")
+    make_loudness_barplot("Australia", "UnitedStates")
     make_country_barplot("loudness")
     create_country_features_dotplot("loudness", "danceability", ["UnitedStates", "Spain", "Sweden", "NewZealand", "Mexica"])
