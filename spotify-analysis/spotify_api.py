@@ -60,7 +60,7 @@ def get_song_audio_features(song_id, access_token=""):
 
 def get_playlist_audio_features(playlist_id, access_token=""):
     """
-    Returns the list of playlist features for each track in the playlist_id provided
+    Returns the list of playlist features for each track in the playlist_id provided, as well as genres
     Args: 
         playlist_id(string): the playlist_id to get from spotify
         access_token(string): the access token to use, if empty, will regenrate a new access_token
@@ -73,7 +73,14 @@ def get_playlist_audio_features(playlist_id, access_token=""):
     
     playlist = get_playlist(playlist_id, access_token)
     playlist_tracks = get_playlist_tracks(playlist, access_token)
-    return get_audio_features(playlist_tracks, access_token)
+    features = get_audio_features(playlist_tracks, access_token)
+
+    # add genre to features
+    for i in range(len(features)):
+        curr_track_genres = get_track_genre(playlist_tracks[i], access_token)
+        features[i]['genre'] = curr_track_genres
+
+    return features
 
 def get_playlist(playlist_id, access_token):
     """
