@@ -29,7 +29,7 @@ def createYearlyCSVs():
         yearly_playlist_features = spotify_api.get_playlist_audio_features(
             top_playlists_per_year[year], access_token)
         year_pd = pd.DataFrame(yearly_playlist_features)
-        year_pd["year"] = year
+        year_pd["year"] = year[:4]
         all_years = all_years.append(year_pd)
 
     spotify_api.export_pd_to_csv(
