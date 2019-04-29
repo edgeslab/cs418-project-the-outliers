@@ -76,9 +76,13 @@ def get_playlist_audio_features(playlist_id, access_token=""):
     features = get_audio_features(playlist_tracks, access_token)
 
     # add genre to features
+    # curr_track_genres is a list of genres - choose only the first one if it is available
     for i in range(len(features)):
         curr_track_genres = get_track_genre(playlist_tracks[i], access_token)
-        features[i]['genre'] = curr_track_genres
+        if len(curr_track_genres) > 0:
+            features[i]['genre'] = curr_track_genres[0]
+        else:
+            features[i]['genre'] = ""
 
     return features
 

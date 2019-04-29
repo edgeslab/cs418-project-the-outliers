@@ -34,15 +34,25 @@ def predict_user_song_year(song_id):
     rfc = predict_rfc(training_data, labels, test_data)
     return getClosestYear(rfc)
     
+def predictYear2():
+    train, test = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
+    labels, train, test = getLabelsAndRemoveColumns(train, test, "year")
+
+    # determined to have the best accuracy as compared to the other options
+    rfc_prediction = predict_rfc(train, labels, test)
+    year =  getClosestYear(rfc_prediction)
+
+    return rfc_prediction, year
+
 def predictYear(filename):
     training_data, labels = createTrainingData()
     test_data = getTestData(filename)
     
     # determined to have the best accuracy as compared to the other options
-    rfc = predict_rfc(training_data, labels, test_data)
-    year =  getClosestYear(rfc)
+    rfc_prediction = predict_rfc(training_data, labels, test_data)
+    year =  getClosestYear(rfc_prediction)
 
-    return rfc, year
+    return rfc_prediction, year
 
 def predict_rfc(training_data, labels, test_data):
     #RandomForestClassifier
@@ -137,6 +147,39 @@ def getClosestYear(results):
 
     return predicted_year
 
+def splitTrainAndTestData(filename): 
+    """
+    Cleans full data set
+    Divides provided full data csv file randomly into ~80% training data and ~20% testing data
+    """
+
+    full_data = pd.read_csv(filename) 
+
+    # remove unneccessary columns 
+    full_data = full_data.drop(['Unnamed: 0', 'id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'time_signature', 'type'], axis=1)
+
+    # gives a list of booleans the same length as the data
+    divider = np.random.rand(len(full_data)) < 0.8  
+    train = full_data[divider]
+    test = full_data[~divider]  # not True
+
+    return train, test
+
+def getLabelsAndRemoveColumns(train, test, label_needed):
+    """
+    @label_needed is the column name that will be used as the label for classificatio
+    Returns a list of labels for the training set and drops that column from both training and test data
+    """
+
+    labels = train[label_needed].tolist()
+    train = train.drop(label_needed, axis=1)
+    test = test.drop(label_needed, axis=1)
+
+    return labels, train, test
+
 #TODO: get rid of main... it's only for testing purposes
 if __name__ == "__main__":
-    all_res, year = predictYear('2018TopTracks')
+    #all_res, year = predictYear('2018TopTracks')
+
+    res_prediction, year = predictYear2()
+    print(year)
