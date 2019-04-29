@@ -14,7 +14,7 @@ import spotify_api
 
 def predict_playlist_year(playlist_id):
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
-    labels, training_data, test_data = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test_data data
+    labels, training_data, test_data, test_labels = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test_data data
     data = spotify_api.get_playlist_audio_features(playlist_id)
     test_data = pd.io.json.json_normalize(data)
 
@@ -22,12 +22,12 @@ def predict_playlist_year(playlist_id):
     training_data = training_data.drop(['genre'], axis = 1)
     test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type','time_signature', 'genre'], axis=1)
 
-    rfc = predict_rfc(training_data, labels, test_data)
-    return getClosestYear(rfc)
+    svc = predict_svc(training_data, labels, test_data)
+    return getClosestYear(svc)
 
 def predict_user_song_year(song_id):
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
-    labels, training_data, test_data = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test data
+    labels, training_data, test_data, test_labels = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test data
 
     song_api_response = spotify_api.get_song_audio_features(song_id)
     test_data = pd.io.json.json_normalize(song_api_response)
@@ -37,23 +37,23 @@ def predict_user_song_year(song_id):
     # test_data = test_data.drop(['genre'], axis = 1) # we didn't add genre to get_song_audio_features() so this isnt needed rn
     test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type', 'time_signature'], axis=1)
 
-    rfc = predict_rfc(training_data, labels, test_data)
-
-    return getClosestYear(rfc)
+    svc = predict_svc(training_data, labels, test_data)
+    
+    return getClosestYear(svc)
 
 def predictYear():
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
-    labels, training_data, test_data = getLabelsAndRemoveColumns(training_data, test_data, "year")
+    labels, training_data, test_data, test_labels = getLabelsAndRemoveColumns(training_data, test_data, "year")
 
     # drop genres for yearly predictions bc we just wanna make our lives easier lol
     training_data = training_data.drop(['genre'], axis = 1)
     test_data = test_data.drop(['genre'], axis = 1)
 
     # determined to have the best accuracy as compared to the other options
-    rfc_prediction = predict_rfc(training_data, labels, test_data)
-    year =  getClosestYear(rfc_prediction)
+    svc_prediction = predict_svc(training_data, labels, test_data)
+    year =  getClosestYear(svc_prediction)
 
-    return rfc_prediction, year
+    return svc_prediction, year
 
 def predict_rfc(training_data, labels, test_data):
     #RandomForestClassifier
@@ -83,6 +83,24 @@ def predict_lr(training_data, labels, test_data):
     l_prediction = l_clf.predict(test_data)
     return l_prediction
 
+def getAccuracy():
+
+    training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
+    labels, training_data, test_data, test_labels = getLabelsAndRemoveColumns(training_data, test_data, "year")
+
+    # drop genres for yearly predictions bc we just wanna make our lives easier lol
+    training_data = training_data.drop(['genre'], axis = 1)
+    test_data = test_data.drop(['genre'], axis = 1)
+
+
+    rfc = predict_rfc(training_data, labels, test_data)
+    dtc = predict_dtc(training_data, labels, test_data)
+    svc = predict_svc(training_data, labels, test_data)
+    lr = predict_lr(training_data, labels, test_data)
+
+
+    prediction_accuracy(dtc, rfc, svc, lr, test_labels)
+
 def prediction_accuracy(dtc, rfc, svc, lr, test_labels):
     #accuracy scores
 
@@ -94,6 +112,10 @@ def prediction_accuracy(dtc, rfc, svc, lr, test_labels):
     classifiers = ['Decision Tree', 'Random Forest', 'Logistic Regression' , 'SVC']
     accuracy = np.array([dtc_tree_acc, rfc_acc, l_acc, s_acc])
     max_acc = np.argmax(accuracy)
+    print('Decision Tree score: ', dtc_tree_acc)
+    print('Random Forest score: ', rfc_acc)
+    print('Support Vector score: ', s_acc )
+    print('Logistic Regression score: ', l_acc )
     print(classifiers[max_acc] + ' is the best classifier for this problem')
 
 def getYearlyFilenames():
@@ -148,11 +170,14 @@ def getLabelsAndRemoveColumns(training_data, test_data, label_needed):
     """
     labels = training_data[label_needed].tolist()
     training_data = training_data.drop(label_needed, axis=1)
+    test_labels = test_data[label_needed]
     test_data = test_data.drop(label_needed, axis=1)
 
-    return labels, training_data, test_data
+    return labels, training_data, test_data, test_labels
 
 #TODO: get rid of main... it's only for testing purposes
 if __name__ == "__main__":
     prediction_list, year = predictYear()
     print(prediction_list)
+
+    # getAccuracy()
