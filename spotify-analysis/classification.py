@@ -13,36 +13,47 @@ from sklearn.metrics import accuracy_score
 import spotify_api
 
 def predict_playlist_year(playlist_id):
-    training_data, labels = createTrainingData()
+    training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
+    labels, training_data, test_data = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test_data data
     data = spotify_api.get_playlist_audio_features(playlist_id)
     test_data = pd.io.json.json_normalize(data)
-    test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type','time_signature'], axis=1)
 
-    print(test_data.shape)
-    print(training_data.shape)
+    # drop genres for yearly predictions bc we just wanna make our lives easier lol
+    training_data = training_data.drop(['genre'], axis = 1)
+    test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type','time_signature', 'genre'], axis=1)
+
     rfc = predict_rfc(training_data, labels, test_data)
     return getClosestYear(rfc)
 
 def predict_user_song_year(song_id):
-    training_data, labels = createTrainingData()
+    training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
+    labels, training_data, test_data = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test data
+
     song_api_response = spotify_api.get_song_audio_features(song_id)
     test_data = pd.io.json.json_normalize(song_api_response)
-    test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type','time_signature'], axis=1)
 
-    print(test_data.shape)
-    print(training_data.shape)
+    # drop genres for yearly predictions bc we just wanna make our lives easier lol
+    training_data = training_data.drop(['genre'], axis = 1)
+    # test_data = test_data.drop(['genre'], axis = 1) # we didn't add genre to get_song_audio_features() so this isnt needed rn
+    test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type', 'time_signature'], axis=1)
+
     rfc = predict_rfc(training_data, labels, test_data)
+
     return getClosestYear(rfc)
-    
-def predictYear(filename):
-    training_data, labels = createTrainingData()
-    test_data = getTestData(filename)
-    
-    # determined to have the best accuracy as compared to the other options
-    rfc = predict_rfc(training_data, labels, test_data)
-    year =  getClosestYear(rfc)
 
-    return rfc, year
+def predictYear():
+    training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
+    labels, training_data, test_data = getLabelsAndRemoveColumns(training_data, test_data, "year")
+
+    # drop genres for yearly predictions bc we just wanna make our lives easier lol
+    training_data = training_data.drop(['genre'], axis = 1)
+    test_data = test_data.drop(['genre'], axis = 1)
+
+    # determined to have the best accuracy as compared to the other options
+    rfc_prediction = predict_rfc(training_data, labels, test_data)
+    year =  getClosestYear(rfc_prediction)
+
+    return rfc_prediction, year
 
 def predict_rfc(training_data, labels, test_data):
     #RandomForestClassifier
@@ -90,33 +101,9 @@ def getYearlyFilenames():
     year_filenames = [] 
     for (path, names, filenames) in walk("topTracksYearsCSV/"):
         year_filenames.extend(filenames)
+    year_filenames.remove("AllYearsTopTracks.csv")
+
     return year_filenames
-
-def createTrainingData():
-    year_filenames = getYearlyFilenames()
-
-    # empty data frame with all column names... 
-    # is there a way to get the column names without writing them out manually lol?
-    training_data = pd.DataFrame(columns=['danceability', 'energy', 'key', 'loudness', 'mode', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'time_signature', 'year'])
-
-    for filename in year_filenames:
-        data = pd.read_csv("topTracksYearsCSV/"+ filename) 
-        data['year'] = filename[:4]
-        training_data = training_data.append(data)
-
-    labels = training_data['year'].tolist()
-
-    # remove unneccessary columns
-    training_data = training_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'time_signature', 'type', 'year'], axis=1)
-
-    return training_data, labels
-
-def getTestData(filename):
-    #TODO: make this actually get the real new user track... enter a url, get that playlist
-    test_data = pd.read_csv("testPlaylistsCSV/" + filename + ".csv") 
-    test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type','time_signature'], axis=1)
-
-    return test_data
 
 def getClosestYear(results):
     """
@@ -137,6 +124,35 @@ def getClosestYear(results):
 
     return predicted_year
 
+def splitTrainAndTestData(filename): 
+    """
+    Cleans full data set
+    Divides provided full data csv file randomly into ~80% training data and ~20% testing data
+    """
+    full_data = pd.read_csv(filename) 
+
+    # remove unneccessary columns 
+    full_data = full_data.drop(['Unnamed: 0', 'id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'time_signature', 'type'], axis=1)
+
+    # gives a list of booleans the same length as the data
+    divider = np.random.rand(len(full_data)) < 0.8  
+    training_data = full_data[divider]
+    test_data = full_data[~divider]  # not True
+
+    return training_data, test_data
+
+def getLabelsAndRemoveColumns(training_data, test_data, label_needed):
+    """
+    @label_needed is the column name that will be used as the label for classificatio
+    Returns a list of labels for the training set and drops that column from both training and test data
+    """
+    labels = training_data[label_needed].tolist()
+    training_data = training_data.drop(label_needed, axis=1)
+    test_data = test_data.drop(label_needed, axis=1)
+
+    return labels, training_data, test_data
+
 #TODO: get rid of main... it's only for testing purposes
 if __name__ == "__main__":
-    all_res, year = predictYear('2018TopTracks')
+    prediction_list, year = predictYear()
+    print(prediction_list)
