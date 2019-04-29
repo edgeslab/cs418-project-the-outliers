@@ -41,7 +41,7 @@ def submit_playlist_song_id():
 
     logging.warning("the predicted year was " + str(song_year))
     return render_template(
-        'submitted_form.html',
+        'submitted_playlist_form.html',
         playlist_id=playlist_id,
         song_id=song_id, song_prediction=str(song_year), playlist_prediction=str(playlist_year))
 

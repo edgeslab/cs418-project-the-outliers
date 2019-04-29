@@ -26,7 +26,7 @@
 
         {% for feature in features %}
         <label for="{{feature.name}}">{{feature.name}}: </label>
-        <input id="{{feature.name}}" type="range" name="{{feature.name}}" min="{{feature.min}}" max="{{feature.max}}" step="{{feature.step}}"> 
+        <input id="{{feature.name}}" type="range" name="{{feature.name.lower()}}" min="{{feature.min}}" max="{{feature.max}}" step="{{feature.step}}"> 
         <label id="{{feature.name}}Label"></label> <br>
         {% endfor %}
         <br/>
