@@ -1,9 +1,9 @@
 import spotify_api
 import time
 import json
+import pandas as pd
 
 access_token = spotify_api.get_access_token()
-
 top_playlists_per_country = {
     "Argentina": "37i9dQZEVXbMMy2roB9myp",
     "Australia": "37i9dQZEVXbJPcfkRz0wJ0",
@@ -65,6 +65,7 @@ top_playlists_per_country = {
     "UnitedStates": "37i9dQZEVXbLRQDuF5jeBp", 
 }
 
+
 def createCountryCSVs():
     for country in top_playlists_per_country.keys():
         country_playlist_features = spotify_api.get_playlist_audio_features(
@@ -72,5 +73,20 @@ def createCountryCSVs():
         spotify_api.export_to_csv(
             "top50CountryCSV/"+country+"Top50.csv", country_playlist_features)
 
+
+def createAllCountryCSV():
+    all_countries = pd.DataFrame()
+    for country in top_playlists_per_country.keys():
+        country_features = spotify_api.get_playlist_audio_features(
+            top_playlists_per_country[country], access_token)
+        country_pd = pd.DataFrame(country_features)
+        country_pd["country"] = country
+        all_countries = all_countries.append(country_pd)
+    
+    spotify_api.export_pd_to_csv(
+        "top50CountryCSV/AllCountriesTopTracks.csv", all_countries)
+
+
 if __name__ == "__main__":
-    createCountryCSVs()
+    # createCountryCSVs()
+    createAllCountryCSV()

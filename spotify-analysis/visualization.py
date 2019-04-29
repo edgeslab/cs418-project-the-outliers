@@ -43,7 +43,7 @@ def create_yearly_features_dotplot(featurea, featureb):
     all_data = get_csv('topTracksYearsCSV/AllYearsTopTracks.csv')
     # idk why but this stripplot function takes 5ever to run - I'm guessing its doing
     # a group_by underneath the hoods and that is what is causing the execution to
-    sns.stripplot(x=featurea, y=featureb, data=all_data, hue="year")
+    sns.stripplot(x=featurea, y=featureb, data=all_data, hue="year", palette='deep')
     plt.title("Yearly data " + featurea + ' VS ' + featureb)
     plt.legend(bbox_to_anchor=(-.05, 1.05), loc="upper right")
     plt.show()
@@ -80,6 +80,15 @@ def duration_graph(years=[]):
     plt.xlabel('Years')
     plt.ylabel('Duration')
     plt.show()
+
+def make_country_feature_dotplot(feature):
+    all_data = get_csv('top50CountryCSV/AllCountriesTopTracks.csv')
+    sns.pointplot(x="country", y=feature, palette='deep', data=all_data)
+    plt.title('Music ' + feature + ' in Countries by Spotify')
+    plt.xlabel('Country')
+    plt.ylabel(feature)
+    plt.show()
+    return
 
 
 def country_feature_barplot(feature, countries=[]):
@@ -122,13 +131,15 @@ def dance_vs_energy_graph(years=[]):
 
 
 if __name__ == "__main__":
+    create_yearly_features_dotplot("danceability", "loudness")
+    make_country_feature_dotplot('loudness')
     duration_graph(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'])
     dance_vs_energy_graph(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'])
     country_feature_barplot('speechiness', ['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
-    country_feature_barplot('loudness', ['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
+    country_feature_barplot('loudness', ['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan', 'Iceland'])
     country_feature_barplot('liveness', ['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
     country_feature_barplot('acousticness', ['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
     danceability_graph(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'])
-    #create_yearly_features_dotplot("danceability", "loudness")
+    create_yearly_features_dotplot("danceability", "loudness")
     country_feature_barplot("loudness", ["Australia", "UnitedStates"])
     country_feature_barplot("loudness")
