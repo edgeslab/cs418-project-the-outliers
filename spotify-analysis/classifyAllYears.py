@@ -1,9 +1,9 @@
 import classification
 
-import main
+import spotify_api
 import json
 
-access_token = main.get_access_token()
+access_token = spotify_api.get_access_token()
 
 top_playlists_per_year = {
     "2018TopTracks": "37i9dQZF1DX1HUbZS4LEyL",
@@ -24,8 +24,9 @@ top_playlists_per_year = {
 }
 
 def testAllYears():
-    for year in top_playlists_per_year.keys():
-        classification.predictYear(year)
+    for id in top_playlists_per_year.values():
+        predicted_year = classification.predict_playlist_year(id)
+
 
 
 if __name__ == "__main__":

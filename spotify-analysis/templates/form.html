@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <title>Submit a form</title>
+   <link rel="stylesheet" type="text/css" href="/static/style.css">
+  </head>
+  <body>
+    <div class="pagetitle">
+      <h1>Let us predict the year your favorite songs are from!</h1>
+    </div>
+
+      <div class="main">
+        <form method="post" action="{{ url_for('submit_playlist_song_id') }}">
+          <label for="playlist_id">Playlist Id: </label>
+          <input type="text" name="playlist_id"><br/>
+          <label for="song_id">Song Id:</label>
+          <input type="text" name="song_id"><br/>
+          <br/>
+          <input type="submit">
+        </form>
+      </div>
+
+      <br/><br/><br/>
+
+      <div class="main">
+        <form method="post" action="{{ url_for('submit_diy_values') }}">
+
+        {% for feature in features %}
+        <label for="{{feature.name}}">{{feature.name}}: </label>
+        <input id="{{feature.name}}" type="range" name="{{feature.name}}" min="{{feature.min}}" max="{{feature.max}}" step="{{feature.step}}"> 
+        <label id="{{feature.name}}Label"></label> <br>
+        {% endfor %}
+        <br/>
+        <input type="submit">
+        </form>
+      </div>
+    </form>
+  </body>
+</html>
+
+<script>
+  // Get all the range input types
+  var all_ranges = document.querySelectorAll('[type="range"]');
+  for (i = 0; i < all_ranges.length; i++) {
+    // get the label for that range
+    var output = document.getElementById(all_ranges[i].id + "Label");
+    output.innerHTML = all_ranges[i].value; // Display the default slider value
+    // Update the current slider value (each time you drag the slider handle)
+    all_ranges[i].oninput = function() {
+      document.getElementById(this.id + "Label").innerHTML = this.value;
+    }
+  }
+</script>  
