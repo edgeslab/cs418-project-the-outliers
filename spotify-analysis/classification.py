@@ -52,6 +52,8 @@ def predict_user_diy_year(song_diy_features):
     return getClosestYear(svc)
 
 def predictYear():
+    # predict year for the 20% test data
+
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
     labels, training_data, test_data, _ = getLabelsAndRemoveColumns(training_data, test_data, "year")
 
@@ -64,6 +66,34 @@ def predictYear():
     year =  getClosestYear(svc_prediction)
 
     return svc_prediction, year
+
+def genreMapper(labels):
+
+    genreMap = {}
+    counter = 0
+
+    for label in labels:
+        if label not in genreMap:
+            genreMap[label] = counter
+            counter = counter + 1
+    
+    return genreMap
+
+def predictGenre():
+    # predict genre for the 20% test data
+
+    training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
+    labels, training_data, test_data, test_labels = getLabelsAndRemoveColumns(training_data, test_data, "genre")
+
+    # replace all genres with numbers
+    genreMap = genreMapper(labels)
+    for label in labels:
+        label = genreMap[label]
+
+    # determined to have the best accuracy as compared to the other options
+    svc_prediction = predict_svc(training_data, labels, test_data)
+
+    return svc_prediction
 
 def predict_rfc(training_data, labels, test_data):
     #RandomForestClassifier
@@ -187,7 +217,10 @@ def getLabelsAndRemoveColumns(training_data, test_data, label_needed):
 
 #TODO: get rid of main... it's only for testing purposes
 if __name__ == "__main__":
-    prediction_list, year = predictYear()
-    print(prediction_list)
+    #prediction_list, year = predictYear()
+    #print(prediction_list)
+
+    genre = predictGenre()
+    print(genre)
 
     # getAccuracy()
