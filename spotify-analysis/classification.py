@@ -14,7 +14,7 @@ import spotify_api
 
 def predict_playlist_year(playlist_id):
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
-    labels, training_data, test_data, test_labels = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test_data data
+    labels, training_data, test_data, _ = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test_data data
     data = spotify_api.get_playlist_audio_features(playlist_id)
     test_data = pd.io.json.json_normalize(data)
 
@@ -27,7 +27,7 @@ def predict_playlist_year(playlist_id):
 
 def predict_user_song_year(song_id):
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
-    labels, training_data, test_data, test_labels = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test data
+    labels, training_data, test_data, _ = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test data
 
     song_api_response = spotify_api.get_song_audio_features(song_id)
     test_data = pd.io.json.json_normalize(song_api_response)
@@ -41,9 +41,19 @@ def predict_user_song_year(song_id):
     
     return getClosestYear(svc)
 
+def predict_user_diy_year(song_diy_features):
+    training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
+    labels, training_data, test_data, _ = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test data
+    training_data = training_data.drop(['genre', 'key', 'mode'], axis = 1)
+
+    test_data = pd.io.json.json_normalize(song_diy_features)
+
+    svc = predict_svc(training_data, labels, test_data)
+    return getClosestYear(svc)
+
 def predictYear():
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
-    labels, training_data, test_data, test_labels = getLabelsAndRemoveColumns(training_data, test_data, "year")
+    labels, training_data, test_data, _ = getLabelsAndRemoveColumns(training_data, test_data, "year")
 
     # drop genres for yearly predictions bc we just wanna make our lives easier lol
     training_data = training_data.drop(['genre'], axis = 1)

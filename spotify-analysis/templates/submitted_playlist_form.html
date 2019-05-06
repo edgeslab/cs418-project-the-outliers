@@ -9,7 +9,7 @@
        <h1>Form submitted</h1>
      </div>
 
-     <div id="main">
+     <div class="main">
        <p>Thanks for your submission!</p>
        <p>Here's a review of the information that you sent:</p>
        <p>
@@ -18,6 +18,7 @@
           <strong>Song Year Predicition</strong>: {{song_prediction}} <br>
           <strong>Playlist Year Predicition</strong>: {{playlist_prediction}} <br>
        </p>
+       <a href="{{ url_for('form') }}">Submit another Playlist or Song</a><br>
      </div>
    </div>
  </body>

@@ -41,16 +41,23 @@ def submit_playlist_song_id():
 
     logging.warning("the predicted year was " + str(song_year))
     return render_template(
-        'submitted_form.html',
+        'submitted_playlist_form.html',
         playlist_id=playlist_id,
         song_id=song_id, song_prediction=str(song_year), playlist_prediction=str(playlist_year))
 
 @app.route('/submit_diy_values', methods=['POST'])
 def submit_diy_values():
-    acousticness = request.form['acousticness']
+    submitted_values = []
+    submit_diy_values = {}
+    for key, value in request.form.items():
+        submitted_values.append({'name': key, 'value': value})
+        submit_diy_values[key] = float(value)
+
+    logging.warning(submit_diy_values)
+    prediction_year = classification.predict_user_diy_year(submit_diy_values)
     return render_template(
         'submitted_diy_form.html',
-        acousticness=acousticness, year_prediciton="1989", genre_prediction="tswifty")
+        values=submitted_values, year_prediciton=prediction_year, genre_prediction="tswifty")
 
 @app.errorhandler(500)
 def server_error(e):
