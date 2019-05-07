@@ -12,6 +12,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 import spotify_api
 
+# Predict the closest year a playlist sounds like
 def predict_playlist_year(playlist_id):
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
     labels, training_data, test_data, _ = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test_data data
@@ -25,6 +26,32 @@ def predict_playlist_year(playlist_id):
     svc = predict_svc(training_data, labels, test_data)
     return getClosestYear(svc)
 
+def predict_playlist_genre(playlist_id):
+    """
+    Predicts what genres a playlist's songs sound like they belong to 
+    Returns a dictionary d. d[genre_name] = song_count
+    """
+
+    training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
+    labels, training_data, test_data, _ = getLabelsAndRemoveColumns(training_data, test_data, "genre")        # not using this test_data data
+    data = spotify_api.get_playlist_audio_features(playlist_id)
+    test_data = pd.io.json.json_normalize(data)
+
+    # drop year for genre predictions
+    training_data = training_data.drop(['year'], axis = 1)
+    test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type','time_signature', 'genre'], axis=1)
+
+    rfc = predict_rfc(training_data, labels, test_data)
+
+    genres = {}
+    for g in rfc:
+        if g not in genres:
+            genres[g] = 0 
+        genres[g] += 1
+
+    return genres
+
+# Predict a song's year
 def predict_user_song_year(song_id):
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
     labels, training_data, test_data, _ = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test data
@@ -41,6 +68,27 @@ def predict_user_song_year(song_id):
     
     return getClosestYear(svc)
 
+# Predict a song's genre
+def predict_user_song_genre(song_id):
+    training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
+    labels, training_data, test_data, _ = getLabelsAndRemoveColumns(training_data, test_data, "genre")      
+    # get rid of year column
+    training_data = training_data.drop(['year'], axis = 1)
+
+    song_api_response = spotify_api.get_song_audio_features(song_id)
+    test_data = pd.io.json.json_normalize(song_api_response)
+    test_data = test_data.drop(['id', 'uri', 'track_href', 'analysis_url', 'duration_ms', 'type', 'time_signature'], axis=1)
+
+    # replace all genres with numbers
+    genreMap = genreMapper(labels)
+    for label in labels:
+        label = genreMap[label]
+
+    rfc = predict_rfc(training_data, labels, test_data)
+
+    return rfc[0]
+
+# Predict a year according to user provided features
 def predict_user_diy_year(song_diy_features):
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
     labels, training_data, test_data, _ = getLabelsAndRemoveColumns(training_data, test_data, "year")        # not using this test data
@@ -51,9 +99,27 @@ def predict_user_diy_year(song_diy_features):
     svc = predict_svc(training_data, labels, test_data)
     return getClosestYear(svc)
 
+# Predict a song's genre according to user provided features
+def predict_user_diy_genre(song_diy_features):
+    training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
+    labels, training_data, _, _ = getLabelsAndRemoveColumns(training_data, test_data, "genre")        # not using this test data
+    training_data = training_data.drop(['year', 'key', 'mode'], axis = 1)
+
+    test_data = pd.io.json.json_normalize(song_diy_features)
+
+    rfc = predict_rfc(training_data, labels, test_data)
+    
+    genres = {}
+    for g in rfc:
+        if g not in genres:
+            genres[g] = 0 
+        genres[g] += 1
+
+    return genres
+
+
 def predictYear():
     # predict year for the 20% test data
-
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
     labels, training_data, test_data, _ = getLabelsAndRemoveColumns(training_data, test_data, "year")
 
@@ -68,7 +134,6 @@ def predictYear():
     return svc_prediction, year
 
 def genreMapper(labels):
-
     genreMap = {}
     counter = 0
 
@@ -80,8 +145,8 @@ def genreMapper(labels):
     return genreMap
 
 def predictGenre():
-    # predict genre for the 20% test data
 
+    # predict genre for the 20% test data
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
     labels, training_data, test_data, test_labels = getLabelsAndRemoveColumns(training_data, test_data, "genre")
 
@@ -91,9 +156,9 @@ def predictGenre():
         label = genreMap[label]
 
     # determined to have the best accuracy as compared to the other options
-    svc_prediction = predict_svc(training_data, labels, test_data)
+    rfc_prediction = predict_rfc(training_data, labels, test_data)
 
-    return svc_prediction
+    return rfc_prediction
 
 def predict_rfc(training_data, labels, test_data):
     #RandomForestClassifier
@@ -123,27 +188,21 @@ def predict_lr(training_data, labels, test_data):
     l_prediction = l_clf.predict(test_data)
     return l_prediction
 
-def getAccuracy():
+def getAccuracy(label):
 
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
-    labels, training_data, test_data, test_labels = getLabelsAndRemoveColumns(training_data, test_data, "year")
-
-    # drop genres for yearly predictions bc we just wanna make our lives easier lol
-    training_data = training_data.drop(['genre'], axis = 1)
-    test_data = test_data.drop(['genre'], axis = 1)
-
+    labels, training_data, test_data, test_labels = getLabelsAndRemoveColumns(training_data, test_data, label)
 
     rfc = predict_rfc(training_data, labels, test_data)
     dtc = predict_dtc(training_data, labels, test_data)
     svc = predict_svc(training_data, labels, test_data)
     lr = predict_lr(training_data, labels, test_data)
 
-
     prediction_accuracy(dtc, rfc, svc, lr, test_labels)
 
 def prediction_accuracy(dtc, rfc, svc, lr, test_labels):
+   
     #accuracy scores
-
     dtc_tree_acc = accuracy_score(dtc,test_labels)
     rfc_acc = accuracy_score(rfc,test_labels)
     l_acc = accuracy_score(lr,test_labels)
@@ -220,7 +279,8 @@ if __name__ == "__main__":
     #prediction_list, year = predictYear()
     #print(prediction_list)
 
-    genre = predictGenre()
+    #genre = predictGenre()
+    genre = predict_playlist_genre('0Vg97p7M8sg62sQrFGiNkP')
     print(genre)
 
-    # getAccuracy()
+    #getAccuracy('genre')
