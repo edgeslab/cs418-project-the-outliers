@@ -108,8 +108,7 @@ def country_feature_barplot(feature, countries=[]):
     plt.ylabel(feature)
     plt.show()
 
-
-def dance_vs_energy_graph(years=[]):
+def create_yearly_pointplot(featurea, featureb, years=[]):
     if len(years) == 0:
         years = GetTopYearly.top_playlists_per_year.keys()
 
@@ -117,24 +116,24 @@ def dance_vs_energy_graph(years=[]):
     for year in years:
         year_data = get_yearly_csv(year)
         features = [
-            {'feature': 'danceability', 'mean': year_data['danceability'].mean(), 'year':year },  
-            {'feature': 'energy', 'mean': year_data['energy'].mean(), 'year':year }
+            {'feature': featurea, 'mean': year_data[featurea].mean(), 'year':year },  
+            {'feature': featureb, 'mean': year_data[featureb].mean(), 'year':year }
         ]
         data = data.append(pd.io.json.json_normalize(features))
 
     sns.pointplot(x="year", y="mean", data=data, hue="feature", linestyle="-", color='purple')
-    plt.title('Danceability VS Energy of Top Songs From 2010-2018')
+    plt.title(featurea + ' VS ' + featureb + ' of Top Songs')
     plt.xlabel('year')
-    plt.ylabel('Dance VS Energy')
     plt.legend()
     plt.show()
 
 
 if __name__ == "__main__":
+    create_yearly_pointplot('acousticness', 'energy')
+    create_yearly_pointplot('danceability', 'energy')
     create_yearly_features_dotplot("danceability", "loudness")
     make_country_feature_dotplot('loudness')
     duration_graph(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'])
-    dance_vs_energy_graph(['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'])
     country_feature_barplot('speechiness', ['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
     country_feature_barplot('loudness', ['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan', 'Iceland'])
     country_feature_barplot('liveness', ['UnitedStates', 'Indonesia', 'Brazil', 'Mexica', 'Japan'])
