@@ -34,10 +34,12 @@ def submit_playlist_song_id():
     song_year = ""
     if song_id != "":
         song_year = classification.predict_user_song_year(song_id)
+        song_genre = classification.predict_user_song_genre(song_id)
     
     playlist_year = ""
     if playlist_id != "":
         playlist_year = classification.predict_playlist_year(playlist_id)
+        playlist_genre = classification.predict_playlist_genre(playlist_id)
 
     logging.warning("the predicted year was " + str(song_year))
     return render_template(
