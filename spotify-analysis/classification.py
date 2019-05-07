@@ -102,7 +102,7 @@ def predict_user_diy_year(song_diy_features):
 # Predict a song's genre according to user provided features
 def predict_user_diy_genre(song_diy_features):
     training_data, test_data = splitTrainAndTestData("topTracksYearsCSV/AllYearsTopTracks.csv")
-    labels, training_data, test_data, _ = getLabelsAndRemoveColumns(training_data, test_data, "genre")        # not using this test data
+    labels, training_data, _, _ = getLabelsAndRemoveColumns(training_data, test_data, "genre")        # not using this test data
     training_data = training_data.drop(['year', 'key', 'mode'], axis = 1)
 
     test_data = pd.io.json.json_normalize(song_diy_features)
