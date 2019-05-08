@@ -32,20 +32,23 @@ def submit_playlist_song_id():
     song_id = request.form['song_id']
 
     song_year = ""
+    song_genre = ""
     if song_id != "":
         song_year = classification.predict_user_song_year(song_id)
         song_genre = classification.predict_user_song_genre(song_id)
     
     playlist_year = ""
+    playlist_genres = []
     if playlist_id != "":
         playlist_year = classification.predict_playlist_year(playlist_id)
         playlist_genre = classification.predict_playlist_genre(playlist_id)
+        for genre in playlist_genre:
+            playlist_genres.append({"genre": genre, "count": playlist_genre[genre]})
 
-    logging.warning("the predicted year was " + str(song_year))
     return render_template(
         'submitted_playlist_form.html',
-        playlist_id=playlist_id,
-        song_id=song_id, song_prediction=str(song_year), playlist_prediction=str(playlist_year))
+        playlist_id=playlist_id, playlist_genres=playlist_genres, playlist_prediction=str(playlist_year),
+        song_id=song_id, song_prediction=str(song_year), song_genre=song_genre)
 
 @app.route('/submit_diy_values', methods=['POST'])
 def submit_diy_values():
@@ -57,9 +60,10 @@ def submit_diy_values():
 
     logging.warning(submit_diy_values)
     prediction_year = classification.predict_user_diy_year(submit_diy_values)
+    genre_prediction = classification.predict_user_diy_genre(submit_diy_values)
     return render_template(
         'submitted_diy_form.html',
-        values=submitted_values, year_prediciton=prediction_year, genre_prediction="tswifty")
+        values=submitted_values, year_prediciton=prediction_year, genre_prediction=genre_prediction)
 
 @app.errorhandler(500)
 def server_error(e):
@@ -73,3 +77,4 @@ if __name__ == '__main__':
     # This is used when running locally. Gunicorn is used to run the
     # application on Google App Engine. See entrypoint in app.yaml.
     app.run(host='127.0.0.1', port=8080, debug=True)
+    

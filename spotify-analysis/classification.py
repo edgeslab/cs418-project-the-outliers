@@ -109,13 +109,7 @@ def predict_user_diy_genre(song_diy_features):
 
     rfc = predict_rfc(training_data, labels, test_data)
     
-    genres = {}
-    for g in rfc:
-        if g not in genres:
-            genres[g] = 0 
-        genres[g] += 1
-
-    return genres
+    return rfc[0]
 
 
 def predictYear():
