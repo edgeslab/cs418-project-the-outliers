@@ -50,4 +50,4 @@ For individual songs, you will have to click on the 3 dots about a song and get 
 https://open.spotify.com/track/5L95vS64rG1YMIFm1hLjyZ is the song Rollercoaster by Bleachers, and it's ID is 
 5L95vS64rG1YMIFm1hLjyZ
 
-Our deployed demo is available at https://https:spotify-outliers.appspot.com
+Our deployed demo is available at https://spotify-outliers.appspot.com
